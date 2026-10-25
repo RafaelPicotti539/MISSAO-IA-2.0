@@ -13,19 +13,21 @@ let perguntaAtual;
 let historiaFinal = '';
 
 function mostraPergunta() {
-    if(atual >= perguntas.length){
+    if (atual >= perguntas.length) {
         mostraResultado();
         return;
     }
+    
     perguntaAtual = perguntas[atual];
-    caixaPerguntas.textContent = perguntaAtual.enunciado;
+    
+    // Substitui "você" dinamicamente para exibição, preservando o array original
+    caixaPerguntas.textContent = perguntaAtual.enunciado.replace(/você/gi, nomeAtual);
     caixaAlternativas.textContent = '';
     mostraAlternativas();
 }
 
-
-function mostraAlternativas(){
-    for(const alternativa of perguntaAtual.alternativas) {
+function mostraAlternativas() {
+    for (const alternativa of perguntaAtual.alternativas) {
         const botaoAlternativa = document.createElement('button');
         botaoAlternativa.textContent = alternativa.texto;
         botaoAlternativa.addEventListener('click', () => respostaSelecionada(alternativa));
@@ -33,26 +35,25 @@ function mostraAlternativas(){
     }
 }
 
-function respostaSelecionada(opcaoSelecionada){
+function respostaSelecionada(opcaoSelecionada) {
     const afirmacao = aleatorio(opcaoSelecionada.afirmacao);
     historiaFinal += afirmacao + ' ';
+
+    if (opcaoSelecionada.proxima !== undefined) {
+        atual = opcaoSelecionada.proxima;
+    } else {
     atual++;
+    }
+
     mostraPergunta();
 }
 
 function mostraResultado() {
-    caixaPerguntas.textContent = 'Em 2049...';
+    caixaPerguntas.textContent = `Em 2049, ${nomeAtual}`;
     textoResultado.textContent = historiaFinal;
     caixaAlternativas.textContent = '';
+    
+    caixaPerguntas.classList.remove('mostrar');
+    caixaAlternativas.classList.remove('mostrar');
     caixaResultado.classList.add('mostrar');
-    botaoJogarNovamente.addEventListener('click', jogaNovamente);
 }
-
-function jogaNovamente(){
-    atual = 0;
-    historiaFinal = "";
-    caixaResultado.classList.remove('mostrar');
-    mostraPergunta();
-}
-
-mostraPergunta();
