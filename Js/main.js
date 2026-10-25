@@ -1,4 +1,4 @@
-import { aleatorio, nome } from './aleatorio.js';
+import { aleatorio, sortearNome } from './aleatorio.js';
 import { perguntas } from './perguntas.js';
 
 const caixaPrincipal = document.querySelector('.caixa-principal');
@@ -13,23 +13,24 @@ const telaInicial = document.querySelector('.tela-inicial');
 let atual = 0;
 let perguntaAtual;
 let historiaFinal = '';
+let nomeAtual = '';
 
-botaoIniciar.addEventListener('click', iniciaJogo);
-botaoJogarNovamente.addEventListener('click', iniciaJogo);
+if (botaoIniciar) botaoIniciar.addEventListener('click', iniciaJogo);
+if (botaoJogarNovamente) botaoJogarNovamente.addEventListener('click', iniciaJogo);
 
 function iniciaJogo() {
     atual = 0;
     historiaFinal = '';
     
-    // Esconde a tela inicial e o resultado
+    // Sortear um novo nome a cada nova partida
+    nomeAtual = sortearNome();
+    
     if (telaInicial) telaInicial.style.display = 'none';
     caixaResultado.classList.remove('mostrar');
     
-    // Exibe a estrutura do quiz
     caixaPerguntas.classList.add('mostrar');
     caixaAlternativas.classList.add('mostrar');
     
-    substituiNome();
     mostraPergunta();
 }
 
@@ -40,7 +41,9 @@ function mostraPergunta() {
     }
     
     perguntaAtual = perguntas[atual];
-    caixaPerguntas.textContent = perguntaAtual.enunciado;
+    
+    // Substitui "você" dinamicamente para exibição, preservando o array original
+    caixaPerguntas.textContent = perguntaAtual.enunciado.replace(/você/gi, nomeAtual);
     caixaAlternativas.textContent = '';
     mostraAlternativas();
 }
@@ -58,7 +61,6 @@ function respostaSelecionada(opcaoSelecionada) {
     const afirmacao = aleatorio(opcaoSelecionada.afirmacao);
     historiaFinal += afirmacao + ' ';
 
-    // Se houver um salto específico indicado em "proxima", usa ele; caso contrário, avança 1 posição
     if (opcaoSelecionada.proxima !== undefined) {
         atual = opcaoSelecionada.proxima;
     } else {
@@ -69,18 +71,11 @@ function respostaSelecionada(opcaoSelecionada) {
 }
 
 function mostraResultado() {
-    caixaPerguntas.textContent = `Em 2049, ${nome}`;
+    caixaPerguntas.textContent = `Em 2049, ${nomeAtual}`;
     textoResultado.textContent = historiaFinal;
     caixaAlternativas.textContent = '';
     
     caixaPerguntas.classList.remove('mostrar');
     caixaAlternativas.classList.remove('mostrar');
     caixaResultado.classList.add('mostrar');
-}
-
-function substituiNome() {
-    for (const pergunta of perguntas) {
-        // Substitui "você" e "Você" mantendo o texto original atualizado
-        pergunta.enunciado = pergunta.enunciado.replace(/você/gi, nome);
-    }
 }
