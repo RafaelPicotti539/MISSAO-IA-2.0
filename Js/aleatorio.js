@@ -1,4 +1,17 @@
-export function aleatorio (Lista){
-    const posicao = Math.floor(Math.random()* Lista.length);
-    return Lista[posicao];
+const nomes = [
+    'Geovana', 
+    'Maria Pedro', 
+    'Naídia', 
+    'Sônia', 
+    'Silvanete', 
+    'Sérgio', 
+    'Eliana', 
+    'Nildo'
+];
+
+export function aleatorio(lista) {
+    const posicao = Math.floor(Math.random() * lista.length);
+    return lista[posicao];
 }
+
+export const nome = aleatorio(nomes);
